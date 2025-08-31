@@ -86,33 +86,48 @@ function executeCommand() {
         }
     }
 
-    // Adiciona o comando ao histórico
     commandHistory.push(commandInputValue);
-    historyIndex = -1; // Reseta o índice do histórico
+    historyIndex = -1; 
 
-    // Adiciona o comando ao console
     addToConsole(commandInputValue);
 
+    sendCommandToESP(action, value);
+
     switch (action) {
-        case 'parafrente':
+        case 'pf':
             moveForward(parseInt(value));
             break;
-        case 'paratras':
+        case 'pt':
             moveBackward(parseInt(value));
             break;
-        case 'viradireita':
+        case 'vd':
             rotateRight(parseInt(value));
             break;
-        case 'viraesquerda':
+        case 've':
             rotateLeft(parseInt(value));
             break;
         default:
-            // Comando não reconhecido
             addToConsole('Comando não reconhecido!', true); // Exibe o aviso em vermelho
     }
 
-    // Limpa o campo de entrada
     commandInput.value = '';
+}
+
+function sendCommandToESP(action, value) {
+    const espIpAddress = '192.168.137.176'; // Substitua pelo IP do seu ESP8266
+    const url = `http://${espIpAddress}/command?action=${action}&value=${value || '0'}`;
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Comando não enviado para o ESP8266');
+            }
+            console.log('Comando enviado com sucesso para o ESP8266.');
+        })
+        .catch(error => {
+            console.error('Erro ao enviar comando:', error);
+            addToConsole('', true);
+        });
 }
 
 // Função para mover o robô para frente
@@ -213,22 +228,4 @@ function resetDraw() {
     // Reinicia o desenho
     ctx.beginPath();
     ctx.moveTo(posX, posY);
-}
-
-function sendCommandToESP8266(command) {
-    const url = 'http://192.168.137.190/command'; // Substitua pelo IP do ESP8266
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ command: command }),
-    })
-    .then(response => response.text())
-    .then(data => {
-        console.log('Resposta do ESP8266:', data);
-    })
-    .catch((error) => {
-        console.error('Erro:', error);
-    });
 }
