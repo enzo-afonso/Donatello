@@ -113,7 +113,7 @@ function executeCommand() {
 }
 
 function sendCommandToESP(action, value) {
-    const espIpAddress = '192.168.137.74'; // IP do ESP8266
+    const espIpAddress = '192.168.137.62'; // IP do ESP8266
     const url = `http://${espIpAddress}/command?action=${action}&value=${value || '0'}`;
 
     fetch(url)

@@ -115,16 +115,6 @@ function executeCommand() {
 function sendCommandToESP(action, value) {
     const espIpAddress = '192.168.137.74'; // IP do ESP8266
     const url = `http://${espIpAddress}/command?action=${action}&value=${value || '0'}`;
-
-    fetch(url)
-        .then(response => {
-            if (!response.ok) throw new Error('Comando não enviado para o ESP8266');
-            console.log('Comando enviado com sucesso para o ESP8266.');
-        })
-        .catch(error => {
-            console.error('Erro ao enviar comando:', error);
-            addToConsole('', true);
-        });
 }
 
 // Função para mover o robô para frente
